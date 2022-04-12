@@ -83,7 +83,7 @@ rm(
 
 
 
-# データを読み込み ----------------------------------------------------------------
+# データを読み込み・セーブ・ロード ----------------------------------------------------------------
 
 ## データをtibble型で読み込み
 data_owid <- readr::read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv", # ファイルパス／URL
@@ -102,6 +102,21 @@ tail(data_owid)
 
 ## データを新しいタブに表示
 View(data_owid)
+
+
+## データをセーブ
+save(data_owid, # セーブするデータ
+     file = "data/data_owid.RData") # セーブ先ファイルパス
+
+
+## データをロード
+load(file = "data/data_owid.RData") # ロード元ファイルパス
+
+
+## CSV形式でデータをセーブ
+write.csv(data_owid, # セーブするデータ
+          file = "data/data_owid.csv", # セーブ先ファイルパス
+          row.names = FALSE) # 行番号を付与するか
 
 
 
