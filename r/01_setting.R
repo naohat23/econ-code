@@ -27,6 +27,24 @@ suppressWarnings()
 suppressMessages()
 
 
+
+# プロキシーサーバー設定 --------------------------------------------------------------------
+
+## プロキシサーバーとポートを記入
+proxy_url <- "http://proxyserver:port/"
+
+
+## Rのシステム環境変数を設定
+Sys.setenv("http_proxy" = proxy_url)
+Sys.setenv("https_proxy" = proxy_url)
+
+
+## Rのダウンロードオプションを設定
+options(download.file.method = "libcurl")
+options(timeout = NA)
+
+
+
 # パッケージのインストールとインポート ------------------------------------------------------------
 
 ## パッケージ一覧
