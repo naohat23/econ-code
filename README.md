@@ -7,20 +7,25 @@ Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 10 x64 (build 19042)  
 ### 01_setting.R - Rを使用する際の各種設定
 * 設定全般
+* プロキシーサーバー設定
 * パッケージのインストールとインポート
 * 図表設定
 
 ### 02_introduction.R - Rの基本的な使用方法
 * 主要ショートカットキー
 * 基本操作・ベクトル・リスト・関数
-* データを読み込み
-* 列（変数）を選択
-* 列（変数）の名前を変更
-* 行をフィルタ
-* 行を並べ替え（ソート）
-* 新しい列（変数）を追加／既存の列（変数）を修正
-* グループ化
-* 集計
-* 縦型・横型を変換
-* 欠損値処理
-* 重複処理
+* データを読み込み・セーブ・ロード
+
+### 03_tidyverse.R - tidyverseを使用したデータベース操作
+* サンプルデータを読み込み
+* 列を選択 dplyr::select()
+* 列の名前を変更 dplyr::rename() 
+* 行をフィルタ dplyr::filter()
+* 行を並べ替え dplyr::arrange()
+* 列を追加・修正 dplyr::mutate()
+* グループ化 dplyr::group_by()
+* 集計 dplyr::summarise()
+* 縦型・横型を変換 tidyr::pivot_*()
+* 重複処理 dplyr::distinct()
+* 欠損値処理 drop_na() replace_na() fill()
+* 時系列データの頻度変換 tidyquant::tq_transmute()
