@@ -1,4 +1,4 @@
-# 03_plot.R ---------------------------------------------------------------
+# 04_plot.R ---------------------------------------------------------------
 
 ## Rで図表を作成する方法
 
@@ -44,6 +44,9 @@ data_owid <- readr::read_csv(file = "https://covid.ourworldindata.org/data/owid-
 
 # ヒストグラム geom_histogram() --------------------------------------------------
 
+## X軸：連続変数
+## Y軸：なし
+
 ## ヒストグラム
 ggplot(data = mpg,
        mapping = aes(x = hwy)) +
@@ -74,6 +77,9 @@ ggplot(data = mpg,
 
 # 密度グラフ geom_density() ----------------------------------------------------
 
+## X軸：連続変数
+## Y軸：なし
+
 ## 密度グラフ
 ggplot(data = mpg,
        mapping = aes(x = hwy)) +
@@ -103,7 +109,43 @@ ggplot(data = mpg,
 
 
 
-# 散布図・バブルチャート geom_point() geom_path() geom_smooth() geom_count() ---------------------------------------------------------------
+# 頻度棒グラフ geom_bar() ---------------------------------------------------------
+
+## X軸：離散変数
+## Y軸：なし
+
+## 縦棒グラフ
+ggplot(data = mpg,
+       mapping = aes(x = manufacturer)) + 
+  geom_bar(alpha = 1.0, # 塗りつぶしの透明度
+           color = "darkblue", # 線の色
+           fill = "lightblue", # 塗りつぶしの色
+           size = 0.5, # 線の太さ
+           width = 0.9) # 棒の幅 (0-1)
+
+
+
+# 頻度バブルチャート geom_count() -----------------------------------------------------------
+
+## X軸：離散変数
+## Y軸：離散変数
+
+## バブルチャート（頻度）
+ggplot(data = mpg,
+       mapping = aes(x = manufacturer, y = class)) +
+  geom_count(alpha = 0.5, # 塗りつぶしの透明度
+             color = "darkblue", # 線の色
+             fill = "lightblue", # 塗りつぶしの色
+             shape = 21, # ポイントの種類
+             stroke = 0.5) + # 線の太さ
+  scale_size_area(max_size = 15) # 変量とポイントの面積を比例させる
+
+
+
+# 散布図 geom_point() geom_path() geom_smooth() ---------------------------------------------------------------
+
+## X軸：連続変数
+## Y軸：連続変数
 
 ## 散布図
 ggplot(data = mpg,
@@ -116,7 +158,28 @@ ggplot(data = mpg,
              stroke = 0.5) # 線の太さ
 
 
-## 散布図＆直線
+## 散布図＆補助線
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_hline(yintercept = 20, # 水平線の縦軸との交点
+             color = "Tomato", # 水平線の色
+             size = 0.5) + # 水平線の太さ
+  geom_vline(xintercept = 20, # 垂直線の横軸との交点
+             color = "Forestgreen", # 垂直線の色
+             size = 0.5) + # 垂直線の太さ
+  geom_abline(intercept = 0, # 直線の切片
+              slope = 1, # 直線の傾き
+              color = "gold", # 直線の色
+              size = 0.5) + # 直線の太さ
+  geom_point(alpha = 1.0, # 塗りつぶしの透明度
+             color = "darkblue", # 線の色
+             fill = "lightblue", # 塗りつぶしの色
+             shape = 21, # ポイントの種類
+             size = 2.0, # ポイントの大きさ
+             stroke = 0.5) # 線の太さ
+
+
+## 散布図＆コネクタ
 economics %>% 
   dplyr::filter(date >= "2000-01-01") %>% 
   ggplot(mapping = aes(x = unemploy, y = uempmed)) +
@@ -131,10 +194,29 @@ economics %>%
              stroke = 0.5) # 線の太さ
 
 
+## 散布図＆近似曲線
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_point(alpha = 1.0, # 塗りつぶしの透明度
+             color = "darkblue", # 線の色
+             fill = "lightblue", # 塗りつぶしの色
+             shape = 21, # ポイントの種類
+             size = 2.0, # ポイントの大きさ
+             stroke = 0.5) + # 線の太さ
+  geom_smooth(formula = y ~ x,
+              method = "loess", # 近似手法 (lm, glm, gam, loess)
+              alpha = 0.5,
+              color = "black",
+              fill = "gray",
+              linetype = "dashed",
+              size = 1.0,
+              weight = 1.0)
+
+
 ## 散布図＆ラベル
 mpg %>% 
   dplyr::group_by(manufacturer) %>% 
-  dplyr::summarise_at(vars(cty, hwy), mean, na.rm = TRUE) %>% 
+  dplyr::summarise(across(c(cty, hwy), mean, na.rm = TRUE)) %>% 
   ggplot(mapping = aes(x = cty, y = hwy)) +
   geom_point(alpha = 1.0, # 塗りつぶしの透明度
              color = "darkblue", # 線の色
@@ -161,32 +243,160 @@ mpg %>%
                   size = 4.0) # テキストのサイズ
 
 
-## 散布図＆近似曲線
-ggplot(data = mpg,
-       mapping = aes(x = cty, y = hwy)) +
+
+## バブルチャート＆ラベル
+mpg %>% 
+  dplyr::group_by(manufacturer) %>% 
+  dplyr::summarise(across(c(displ, cty, hwy), mean, na.rm = TRUE)) %>% 
+  ggplot(mapping = aes(x = cty, y = hwy, size = displ)) + # aes() 関数内のsize引数に連続変数を指定
   geom_point(alpha = 1.0, # 塗りつぶしの透明度
              color = "darkblue", # 線の色
              fill = "lightblue", # 塗りつぶしの色
              shape = 21, # ポイントの種類
-             size = 2.0, # ポイントの大きさ
              stroke = 0.5) + # 線の太さ
-  geom_smooth(formula = y ~ x,
-              method = "loess", # 近似手法 (lm, glm, gam, loess)
-              alpha = 0.5,
-              color = "black",
-              fill = "gray",
-              linetype = "dashed",
-              size = 1.0,
-              weight = 1.0)
-
-
-## バブルチャート
-ggplot(data = mpg,
-       mapping = aes(x = cty, y = hwy)) +
-  geom_count(alpha = 0.5, # 塗りつぶしの透明度
-             color = "darkblue", # 線の色
-             fill = "lightblue", # 塗りつぶしの色
-             shape = 21, # ポイントの種類
-             stroke = 0.5) + # 線の太さ
+  geom_text_repel(mapping = aes(label = manufacturer),
+                  seed = NA, # テキストの配置を決定するランダムシード
+                  direction = "both", # テキストの整列方向 (both / x / y)
+                  hjust = 0.0, # 横方向の整列位置 (0-1) 
+                  vjust = 0.5, # 縦方向の整列位置 (0-1)
+                  nudge_x = NULL, # マーカーからの横方向のスペース (NULL, 0-)
+                  nudge_y = NULL, # マーカーからの縦方向のスペース (NULL, 0-)
+                  box.padding = 1.0, # テキスト周囲のスペース (0-)
+                  point.padding = 0.1, # マーカー周囲のスペース (0-)
+                  segment.alpha = 1.0, # 引き出し線の透明度
+                  segment.color = "grey", # 引き出し線の色
+                  segment.size = 0.5, # 引き出し線の太さ
+                  min.segment.length = 0, # 引き出し線の最低長
+                  color = "black", # テキストの色
+                  family = "MEIRYO", # テキストのフォント
+                  fontface = "plain", # テキストの書体 (plain / bold / italic / bold.italic)
+                  size = 4.0) + # テキストのサイズ
   scale_size_area(max_size = 15) # 変量とポイントの面積を比例させる
+
+
+
+# 棒グラフ geom_col() ---------------------------------------------------------
+
+## X軸が離散変数
+## Y軸が連続変数
+
+## サンプルデータの作成
+data_mpg_col <- mpg %>% 
+  dplyr::group_by(manufacturer) %>% 
+  dplyr::summarise(across(c(cty, hwy), mean, na.rm = TRUE))
+
+data_mpg_col_long <- data_mpg_col %>% 
+  tidyr::pivot_longer(cols = -"manufacturer") %>% 
+  dplyr::mutate(name = factor(name,
+                              levels = c("cty", "hwy")))
+
+
+## 縦棒グラフ
+ggplot(data = data_mpg_col,
+         mapping = aes(x = manufacturer, y = cty)) + 
+  geom_col(alpha = 1.0, # 塗りつぶしの透明度
+           color = "darkblue", # 線の色
+           fill = "lightblue", # 塗りつぶしの色
+           size = 0.5, # 線の太さ
+           width = 0.9) # 棒の幅 (0-1)
+
+
+## 横棒グラフ
+ggplot(data = data_mpg_col,
+       mapping = aes(x = manufacturer, y = cty)) + 
+  geom_col(alpha = 1.0, # 塗りつぶしの透明度
+           color = "darkblue", # 線の色
+           fill = "lightblue", # 塗りつぶしの色
+           size = 0.5, # 線の太さ
+           width = 0.9) + # 棒の幅 (0-1)
+  coord_flip()
+
+
+## 縦棒グラフの並べ替え
+ggplot(data = data_mpg_col,
+       mapping = aes(x = fct_reorder(manufacturer, -cty), y = cty)) + 
+  geom_col(alpha = 1.0, # 塗りつぶしの透明度
+           color = "darkblue", # 線の色
+           fill = "lightblue", # 塗りつぶしの色
+           size = 0.5, # 線の太さ
+           width = 0.9) # 棒の幅 (0-1)
+
+
+## 縦棒グラフ＆ラベル
+ggplot(data = data_mpg_col,
+       mapping = aes(x = manufacturer, y = cty)) + 
+  geom_col(alpha = 1.0, # 塗りつぶしの透明度
+           color = "darkblue", # 線の色
+           fill = "lightblue", # 塗りつぶしの色
+           size = 0.5, # 線の太さ
+           width = 0.9) + # 棒の幅 (0-1)
+  geom_text(mapping = aes(label = cty %>% sprintf(fmt = "%0.1f")), # sprintf() 関数で数値の表示形式を指定
+            vjust = -1, # 縦方向の整列位置 (0-1)
+            color = "black", # テキストの色
+            family = "MEIRYO", # テキストのフォント
+            fontface = "plain", # テキストの書体 (plain / bold / italic / bold.italic)
+            size = 4.0) # テキストのサイズ
+
+
+## 縦棒グラフ（横並び）
+data_mpg_col_long %>% 
+  ggplot(mapping = aes(x = manufacturer, y = value, fill = name, group = rev(name))) + 
+  geom_col(position = position_dodge(width = 0.5), # 横並びポジション
+           alpha = 1.0, # 塗りつぶしの透明度
+           size = 0.5, # 線の太さ
+           width = 0.9) # 棒の幅 (0-1)
+
+
+## 縦棒グラフ（積み上げ）
+data_mpg_col_long %>% 
+  ggplot(mapping = aes(x = manufacturer, y = value, fill = name, group = rev(name))) + 
+  geom_col(position = position_stack(), # 積み上げポジション
+           alpha = 1.0, # 塗りつぶしの透明度
+           size = 0.5, # 線の太さ
+           width = 0.9) + # 棒の幅 (0-1)
+  guides(fill = guide_legend(reverse = TRUE))
+
+
+## 縦棒グラフ（積み上げ）＆ラベル
+data_mpg_col_long %>% 
+  ggplot(mapping = aes(x = manufacturer, y = value, fill = name, group = rev(name))) + 
+  geom_col(position = position_stack(), # 積み上げポジション
+           alpha = 1.0, # 塗りつぶしの透明度
+           size = 0.5, # 線の太さ
+           width = 0.9) + # 棒の幅 (0-1)
+  geom_text(mapping = aes(label = value %>% sprintf(fmt = "%0.1f")), # sprintf() 関数で数値の表示形式を指定
+            position = position_stack(vjust = 0.5), # position_stack() 関数で積み上げ棒グラフ上のラベル位置を指定
+            color = "white", # テキストの色
+            family = "MEIRYO", # テキストのフォント
+            fontface = "plain", # テキストの書体 (plain / bold / italic / bold.italic)
+            size = 4.0) + # テキストのサイズ
+  guides(fill = guide_legend(reverse = TRUE))
+
+
+## 縦棒グラフ（割合）
+data_mpg_col_long %>% 
+  ggplot(mapping = aes(x = manufacturer, y = value, fill = name, group = rev(name))) + 
+  geom_col(position = position_fill(), # 割合ポジション
+           alpha = 1.0, # 塗りつぶしの透明度
+           size = 0.5, # 線の太さ
+           width = 0.9) + # 棒の幅 (0-1)
+  guides(fill = guide_legend(reverse = TRUE))
+
+
+## 縦棒グラフ（割合）＆ラベル
+data_mpg_col_long %>% 
+  dplyr::group_by(manufacturer) %>% 
+  dplyr::mutate(percent = value / sum(value)) %>% 
+  ggplot(mapping = aes(x = manufacturer, y = value, fill = name, group = rev(name))) + 
+  geom_col(position = position_fill(), # 割合ポジション
+           alpha = 1.0, # 塗りつぶしの透明度
+           size = 0.5, # 線の太さ
+           width = 0.9) + # 棒の幅 (0-1)
+  geom_text(mapping = aes(label = percent %>% sprintf(fmt = "%0.2f")), # sprintf() 関数で数値の表示形式を指定
+            position = position_fill(vjust = 0.5), # position_fill() 関数で割合棒グラフ上のラベル位置を指定
+            color = "white", # テキストの色
+            family = "MEIRYO", # テキストのフォント
+            fontface = "plain", # テキストの書体 (plain / bold / italic / bold.italic)
+            size = 4.0) + # テキストのサイズ
+  guides(fill = guide_legend(reverse = TRUE))
 
