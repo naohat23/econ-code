@@ -2,9 +2,9 @@
 経済・金融データ分析に使用する、RとPythonのサンプルコード集です。
 
 ## R
-R version 4.1.3 (2022-03-10)  
-Platform: x86_64-w64-mingw32/x64 (64-bit)  
-Running under: Windows 10 x64 (build 19042)  
+R version 4.1.3 (2022-03-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19042)
 ### 01_setting.R - Rを使用する際の各種設定
 * 設定全般
 * プロキシーサーバー設定
@@ -19,7 +19,7 @@ Running under: Windows 10 x64 (build 19042)
 ### 03_tidyverse.R - tidyverseを使用したデータベース操作
 * サンプルデータを読み込み
 * 列を選択 dplyr::select()
-* 列の名前を変更 dplyr::rename() 
+* 列の名前を変更 dplyr::rename()
 * 行をフィルタ dplyr::filter()
 * 行を並べ替え dplyr::arrange()
 * 列を追加・修正 dplyr::mutate()
@@ -29,3 +29,11 @@ Running under: Windows 10 x64 (build 19042)
 * 重複処理 dplyr::distinct()
 * 欠損値処理 drop_na() replace_na() fill()
 * 時系列データの頻度変換 tidyquant::tq_transmute()
+### 04_plot.R - 図表作成
+* サンプルデータの確認・作成
+* ヒストグラム geom_histogram()
+* 密度グラフ geom_density()
+* 頻度棒グラフ geom_bar()
+* 頻度バブルチャート geom_count()
+* 散布図 geom_point() geom_path() geom_smooth()
+* 棒グラフ geom_col()
