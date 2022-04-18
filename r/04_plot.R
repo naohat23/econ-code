@@ -211,14 +211,13 @@ ggplot(data = mpg,
              shape = 21, # ポイントの種類
              size = 2.0, # ポイントの大きさ
              stroke = 0.5) + # 線の太さ
-  geom_smooth(formula = y ~ x,
+  geom_smooth(formula = y ~ x, # 近似曲線の推計式
               method = "loess", # 近似手法 (lm, glm, gam, loess)
-              alpha = 0.5,
-              color = "black",
-              fill = "gray",
-              linetype = "dashed",
-              size = 1.0,
-              weight = 1.0)
+              alpha = 0.5, # 誤差範囲の透明度
+              color = "black", # 近似曲線の色
+              fill = "gray", # 誤差範囲の色
+              linetype = "dashed", # 近似曲線の種類 (solid / dashed / dotted / dotdash / twodash / longdash)
+              size = 1.0) # 近似曲線の太さ
 
 
 ## 散布図＆ラベル
@@ -405,7 +404,7 @@ data_mpg_col_long %>%
 
 
 
-# 軸の設定・ラベル ---------------------------------------------------------------------
+# 軸の設定 ---------------------------------------------------------------------
 
 ## サンプルデータの作成
 data_owid_scale <- data_owid %>% 
@@ -428,9 +427,9 @@ ggplot(data = data_owid_scale,
                      labels = breaks_y, # 目盛ラベル
                      limits = c(0, 8000), # 下限・上限値
                      expand = expansion(mult = c(0.05, 0.05), add = c(0, 0))) + # 下限・上限値からの余白（multは余白率、addは余白幅）
-  labs(x = "新規感染者数（1日当たり平均、人）", # X軸のラベル
-       y = "新規死亡者数（1日当たり平均、人）") + # Y軸のラベル
-  theme(axis.title = element_text(size = 8)) # 軸ラベルの大きさ
+  labs(x = "新規感染者数（1日当たり平均、人）", # X軸のタイトル
+       y = "新規死亡者数（1日当たり平均、人）") + # Y軸のタイトル
+  theme(axis.title = element_text(size = 8)) # 軸タイトルの文字サイズ
 
 
 ## 対数目盛
@@ -446,45 +445,101 @@ ggplot(data = data_owid_scale,
                      labels = c(breaks_y[1:4], "1万"), # 目盛ラベル
                      limits = c(1, 8000), # 下限・上限値
                      expand = expansion(mult = c(0.05, 0.05), add = c(0, 0))) + # 下限・上限値からの余白（multは余白率、addは余白幅）
-  labs(x = "新規感染者数（1日当たり平均、人）", # X軸のラベル
-       y = "新規死亡者数（1日当たり平均、人）") + # Y軸のラベル
-  theme(axis.title = element_text(size = 8)) # 軸ラベルの大きさ
+  labs(x = "新規感染者数（1日当たり平均、人）", # X軸のタイトル
+       y = "新規死亡者数（1日当たり平均、人）") + # Y軸のタイトル
+  theme(axis.title = element_text(size = 8)) # 軸タイトルの文字サイズ
 
 
 ## X軸：日付、Y軸：連続値（date_breaksを使用する場合）
 ggplot(data = economics,
        mapping = aes(x = date, y = unemploy)) + 
   geom_line() +
-  scale_x_date(date_breaks = "3 month",
+  scale_x_date(date_breaks = "3 month",　# 日付目盛の周期
                date_labels = "%y/%b", # %Y：4桁年、%y：2桁年、%m：2桁月、%b：1桁月、%d：日
-               limits = c(as.Date("2000/01/01"), as.Date("2002/12/31")),
-               expand = expansion(mult = c(0.00, 0.00), add = c(0, 0))) + # 下限・上限値からの余白（multは余白率、addは余白幅）
+               limits = c(as.Date("2000/01/01"), as.Date("2002/12/31")), # 始期・終期
+               expand = expansion(mult = c(0.00, 0.00), add = c(0, 0))) + # 始期・終期からの余白（multは余白率、addは余白幅）
   scale_y_continuous(breaks = breaks_y <- seq(0, 50000, 1000), # 目盛
                      labels = breaks_y, # 目盛ラベル
                      limits = c(5000, 10000), # 下限・上限値
                      expand = expansion(mult = c(0.05, 0.05), add = c(0, 0))) + # 下限・上限値からの余白（multは余白率、addは余白幅）
-  labs(x = "日付（年/月）", # X軸のラベル
-       y = "失業者数（千人）") + # Y軸のラベル
-  theme(axis.title = element_text(size = 8)) # 軸ラベルの大きさ
+  labs(x = "日付（年/月）", # X軸のタイトル
+       y = "失業者数（千人）") + # Y軸のタイトル
+  theme(axis.title = element_text(size = 8)) # 軸タイトルの文字サイズ
 
 
 ## X軸：日付、Y軸：連続値（date_breaksを使用しない場合）
 ggplot(data = economics,
        mapping = aes(x = date, y = unemploy)) + 
   geom_line() +
-  scale_x_date(breaks = breaks_x <- seq(as.Date("1967-01-01"), max(economics$date), by = "3 months"),
-               date_labels = str_c(str_sub(lubridate::year(breaks_x), 3, 4), "/", lubridate::month(breaks_x)),
-               limits = c(as.Date("2000/01/01"), as.Date("2002/12/31")),
-               expand = expansion(mult = c(0.00, 0.00), add = c(0, 0))) + # 下限・上限値からの余白（multは余白率、addは余白幅）
+  scale_x_date(breaks = breaks_x <- seq(as.Date("1967-01-01"), max(economics$date), by = "3 months"), # 日付目盛ベクトル
+               date_labels = str_c(str_sub(lubridate::year(breaks_x), 3, 4), "/", lubridate::month(breaks_x)), # 日付目盛ベクトルをラベル用に加工
+               limits = c(as.Date("2000/01/01"), as.Date("2002/12/31")), # 始期・終期
+               expand = expansion(mult = c(0.00, 0.00), add = c(0, 0))) + # 始期・終期からの余白（multは余白率、addは余白幅）
   scale_y_continuous(breaks = breaks_y <- seq(0, 50000, 1000), # 目盛
                      labels = breaks_y, # 目盛ラベル
                      limits = c(5000, 10000), # 下限・上限値
                      expand = expansion(mult = c(0.05, 0.05), add = c(0, 0))) + # 下限・上限値からの余白（multは余白率、addは余白幅）
-  labs(x = "日付（年/月）", # X軸のラベル
-       y = "失業者数（千人）") + # Y軸のラベル
-  theme(axis.title = element_text(size = 8)) # 軸ラベルの大きさ
+  labs(x = "日付（年/月）", # X軸のタイトル
+       y = "失業者数（千人）") + # Y軸のタイトル
+  theme(axis.title = element_text(size = 8)) # 軸タイトルの文字サイズ
 
-  
+
+
+# その他の設定・保存 -------------------------------------------------------------------
+
+## その他設定
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy, fill = class)) +
+  geom_point(shape = 21,
+             size = 2.0) +
+  labs(title = "車体クラス別の一般道燃費と高速道燃費", # 図表タイトル
+       caption = "（出所）EPA.gov", # キャプション
+       fill = "車体クラス")　+ # 凡例に使用するscaleのタイトル
+  theme(plot.title = element_text(size = 10, # 図表タイトルの文字サイズ
+                                  face = "bold", # 図表タイトルの書体
+                                  hjust = 0.5), # 図表タイトルの横整列位置
+        plot.caption = element_text(size = 8, # キャプションの文字サイズ
+                                    face = "plain", # キャプションの書体
+                                    hjust = 0.0)) + # キャプションの横整列位置
+  theme(panel.grid.major = element_line(color = "grey", # 主目盛線の色
+                                        linetype = "dashed", # 主目盛線の種類 (solid / dashed / dotted / dotdash / twodash / longdash)
+                                        size = 0.2), # 主目盛線の太さ
+        panel.grid.minor = element_blank()) + # 補助目盛り線は表示しない
+  theme(legend.title = element_text(size = 8, # 凡例タイトルの文字サイズ
+                                    face = "bold", # 凡例タイトルの書体
+                                    hjust = 0.0), # 凡例タイトルの横整列位置
+        legend.text = element_text(size = 6), # 凡例ラベルの文字サイズ
+        legend.box.background = element_rect(color = "grey", # 凡例の枠線の色
+                                             size = 0.5), # 凡例の枠線の太さ
+        legend.margin = margin(t = 1, # 凡例の上マージン
+                               b = 1, # 凡例の下マージン
+                               r = 1, # 凡例の右マージン
+                               l = 1, # 凡例の左マージン
+                               unit = "mm"), # 凡例マージンの単位
+        legend.justification = c(1.0, 0.0), # 凡例の横整列位置・縦整列位置
+        legend.position = c(0.95, 0.05)) + # 凡例の横位置・縦位置
+  guides(fill = guide_legend(keywidth = unit(3, units = "mm"), # 凡例キーの幅
+                             keyheight = unit(3, units = "mm"), # 凡例キーの高さ
+                             direction = "vertical", # 凡例の整列方向 (horizontal / vertical)
+                             nrow = 3, # 凡例の行数
+                             ncol = 3, # 凡例の列数
+                             reverse = FALSE)) + # 凡例順序の逆転
+  theme(text = element_text(family = "YUGO", # 図表全体のフォント
+                            size = 8), # 図表全体の無事サイズ
+        plot.margin = margin(t = 1, # 図表の上マージン
+                             b = 1, # 図表の下マージン
+                             r = 1, # 図表の右マージン
+                             l = 1, # 図表の左マージン
+                             unit = "mm")) # 図表マージンの単位
+
+
+## 保存
+ggsave(filename = "plot/04_plot_theme.png", # 図表のファイル名
+       width = 12.00, # 図表の横サイズ
+       height = 9.00, # 図表の縦サイズ
+       units = "cm", # 図表のサイズ単位
+       dpi = 300) # 図表の解像度
+
 
 
 
