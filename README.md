@@ -37,5 +37,6 @@ Running under: Windows 10 x64 (build 19042)
 * 頻度バブルチャート geom_count()
 * 散布図 geom_point() geom_path() geom_smooth()
 * 棒グラフ geom_col()
+* 折れ線・面・ステップグラフ geom_line() geom_area() geom_ribbon() geom_step()
 * 軸の設定
 * その他の設定・保存
