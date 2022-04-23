@@ -2,9 +2,9 @@
 経済・金融データ分析に使用する、RとPythonのサンプルコード集です。
 
 ## R
-R version 4.1.3 (2022-03-10)
-Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 10 x64 (build 19042)
+R version 4.1.3 (2022-03-10)  
+Platform: x86_64-w64-mingw32/x64 (64-bit)  
+Running under: Windows 10 x64 (build 19042)  
 ### 01_setting.R - Rを使用する際の各種設定
 * 設定全般
 * プロキシーサーバー設定
@@ -38,5 +38,6 @@ Running under: Windows 10 x64 (build 19042)
 * 散布図 geom_point() geom_path() geom_smooth()
 * 棒グラフ geom_col()
 * 折れ線・面・ステップグラフ geom_line() geom_area() geom_ribbon() geom_step()
+* 箱ひげ・ヴァイオリングラフ geom_boxplot() geom_violin() geom_dotplot() geom_jitter() geom_dotplot()
 * 軸の設定
-* その他の設定・保存
+* タイトル・目盛線・凡例・保存 theme() ggsave()
