@@ -412,6 +412,40 @@ data_owid_col %>%
 
 
 
+# 円グラフ --------------------------------------------------------------------
+
+## サンプルデータの作成
+data_mpg_circle <- mpg %>% 
+  dplyr::group_by(class) %>% 
+  dplyr::summarise(across(c(hwy), mean, na.rm = TRUE))
+
+View(data_mpg_circle)
+
+
+## 円グラフ
+ggplot(data = data_mpg_circle,
+       mapping = aes(x = 1, y = hwy, fill = class, group = rev(class))) + 
+  geom_col(position = position_stack(), # 積み上げポジション
+           alpha = 1.0, # 塗りつぶしの透明度
+           color = "grey", # 線の色
+           size = 0.5) + # 線の太さ
+  geom_text(mapping = aes(label = hwy %>% sprintf(fmt = "%0.1f")), # sprintf() 関数で数値の表示形式を指定
+            position = position_stack(vjust = 0.5), # position_stack() 関数で積み上げ棒グラフ上のラベル位置を指定
+            color = "white", # テキストの色
+            family = "YUGO", # テキストのフォント
+            fontface = "plain", # テキストの書体 (plain / bold / italic / bold.italic)
+            size = 4.0) + # テキストのサイズ
+  coord_polar(theta = "y", # 円グラフを作成する軸
+              start = 0, # 円グラフの開始位置（ラジアン）
+              direction = 1) + # 円グラフの方向（1：時計回り、-1：反時計回り）
+  theme(panel.grid = element_blank(), # パネルの軸や目盛り線を表示しない
+        axis.title = element_blank(),
+        axis.text  = element_blank(),
+        axis.ticks = element_blank())
+  guides(fill = guide_legend(reverse = FALSE))
+
+
+
 # 折れ線・面・ステップグラフ geom_line() geom_area() geom_ribbon() geom_step() ------------------------------------------------------
 
 ## X軸：日付型変数
