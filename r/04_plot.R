@@ -443,6 +443,21 @@ ggplot(data = economics,
             size = 1.0) # 線の太さ
 
 
+## 折れ線グラフ＆マーカー
+ggplot(data = economics,
+       mapping = aes(x = date, y = unemploy)) +
+  geom_line(alpha = 1.0, # 線の透明度
+            color = "darkblue", # 線の色
+            linetype = "solid", # 線の種類（solid / dashed / dotted / dotdash / twodash / longdash）
+            size = 1.0) + # 線の太さ
+  geom_point(alpha = 1.0, # 塗りつぶしの透明度
+             color = "darkblue", # 線の色
+             fill = "lightblue", # 塗りつぶしの色
+             shape = 21, # ポイントの種類
+             size = 2.0, # ポイントの大きさ
+             stroke = 0.5) # 線の太さ
+
+
 ## 折れ線グラフ＆系列ラベル
 ggplot(data = data_owid_line,
        mapping = aes(x = date, y = new_cases_smoothed, color = location)) +
@@ -515,6 +530,87 @@ ggplot(data = data_owid_step,
   geom_step(alpha = 1.0, # 線の透明度
             linetype = "solid", # 線の種類（solid / dashed / dotted / dotdash / twodash / longdash）
             size = 1.0) # 線の太さ
+
+
+
+# 箱ひげ・ヴァイオリングラフ geom_boxplot() geom_violin() geom_dotplot() geom_jitter() geom_dotplot() ---------------------------
+
+## X軸：離散型変数
+## Y軸：連続型変数
+
+## 箱ひげグラフ
+ggplot(data = mpg,
+       mapping = aes(x = class, y = hwy)) +
+  geom_boxplot(outlier.alpha = 1.0, # 外れ値マーカーの塗りつぶしの透明度
+               outlier.color = "darkblue", # 外れ値マーカーの線の色
+               outlier.fill = "lightblue", # 外れ値マーカーの塗りつぶしの色
+               outlier.shape = 21, # 外れ値マーカーの種類（外れ値を表示しない場合はNA）
+               outlier.size = 2.0, # 外れ値マーカーの大きさ
+               outlier.stroke = 0.5, # 外れ値マーカーの線の太さ
+               alpha = 0.5, # 箱の塗りつぶしの透明度
+               color = "darkblue", # 箱ひげの線の色
+               fill = "lightblue", # 箱の塗りつぶしの色
+               size = 0.5) # 箱ひげの線の太さ
+
+
+## 箱ひげグラフ＆ジッターグラフ
+ggplot(data = mpg,
+       mapping = aes(x = class, y = hwy)) +
+  geom_boxplot(outlier.shape = NA, # 外れ値マーカーの種類（外れ値を表示しない場合はNA）
+               alpha = 0.5, # 箱の塗りつぶしの透明度
+               color = "darkblue", # 箱ひげの線の色
+               fill = "lightblue", # 箱の塗りつぶしの色
+               size = 0.5) + # 箱ひげの線の太さ
+  geom_jitter(height = 0.3, # マーカーの縦方向の分布範囲
+              width = 0.3, # マーカーの横方向の分布範囲
+              alpha = 1.0, # マーカーの塗りつぶしの透明度
+              color = "darkblue", # マーカーの線の色
+              fill = "darkblue", # マーカーの塗りつぶしの色
+              shape = 21, # マーカーの種類
+              size = 1.0, # マーカーの大きさ
+              stroke = 0.5) # マーカーの線の太さ
+
+
+## ヴァイオリングラフ
+ggplot(data = mpg,
+       mapping = aes(x = class, y = hwy)) +
+  geom_violin(scale = "area", # ヴァイオリンの大きさ（area：すべての面積が同じ、count：サンプル個数に比例、width：すべての幅が同じ）
+              alpha = 0.5, # ヴァイオリンの塗りつぶしの透明度
+              color = "darkblue", # ヴァイオリンの線の色
+              fill = "lightblue", # ヴァイオリンの塗りつぶしの色
+              linetype = "solid", # ヴァイオリンの線の種類
+              size = 0.5) # ヴァイオリンの線の太さ
+
+
+## ヴァイオリングラフ
+ggplot(data = mpg,
+       mapping = aes(x = class, y = hwy)) +
+  geom_violin(scale = "area", # ヴァイオリンの大きさ（area：すべての面積が同じ、count：サンプル個数に比例、width：すべての幅が同じ）
+              alpha = 0.5, # ヴァイオリンの塗りつぶしの透明度
+              color = "darkblue", # ヴァイオリンの線の色
+              fill = "lightblue", # ヴァイオリンの塗りつぶしの色
+              linetype = "solid", # ヴァイオリンの線の種類
+              size = 0.5) + # ヴァイオリンの線の太さ
+  geom_jitter(height = 0.4, # マーカーの縦方向の分布範囲
+              width = 0.4, # マーカーの横方向の分布範囲
+              alpha = 1.0, # マーカーの塗りつぶしの透明度
+              color = "darkblue", # マーカーの線の色
+              fill = "darkblue", # マーカーの塗りつぶしの色
+              shape = 21, # マーカーの種類
+              size = 1.0, # マーカーの大きさ
+              stroke = 0.5) # マーカーの線の太さ
+
+
+## ドットプロット
+ggplot(data = mpg,
+       mapping = aes(x = class, y = hwy)) +
+  geom_dotplot(binaxis = "y",
+               binwidth = 0.5,
+               stackdir = "center",
+               alpha = 1.0, # マーカーの塗りつぶしの透明度
+               color = "darkblue", # マーカーの線の色
+               fill = "lightblue", # マーカーの塗りつぶしの色
+               stroke = 0.5) # マーカーの線の太さ
 
 
 
@@ -600,9 +696,9 @@ ggplot(data = economics,
 
 
 
-# その他の設定・保存 -------------------------------------------------------------------
+# タイトル・目盛線・凡例・保存 theme() ggsave() -------------------------------------------------------------------
 
-## その他設定
+## タイトル・キャプション
 ggplot(data = mpg,
        mapping = aes(x = cty, y = hwy, fill = class)) +
   geom_point(shape = 21,
@@ -615,11 +711,25 @@ ggplot(data = mpg,
                                   hjust = 0.5), # 図表タイトルの横整列位置
         plot.caption = element_text(size = 8, # キャプションの文字サイズ
                                     face = "plain", # キャプションの書体
-                                    hjust = 0.0)) + # キャプションの横整列位置
+                                    hjust = 0.0)) # キャプションの横整列位置
+
+
+## パネル目盛線
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy, fill = class)) +
+  geom_point(shape = 21,
+             size = 2.0) +
   theme(panel.grid.major = element_line(color = "grey", # 主目盛線の色
-                                       linetype = "dashed", # 主目盛線の種類（solid / dashed / dotted / dotdash / twodash / longdash）
+                                        linetype = "dashed", # 主目盛線の種類（solid / dashed / dotted / dotdash / twodash / longdash）
                                         size = 0.2), # 主目盛線の太さ
-        panel.grid.minor = element_blank()) + # 補助目盛り線は表示しない
+        panel.grid.minor = element_blank()) # 補助目盛り線は表示しない
+
+
+## 凡例
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy, fill = class)) +
+  geom_point(shape = 21,
+             size = 2.0) +
   theme(legend.title = element_text(size = 8, # 凡例タイトルの文字サイズ
                                     face = "bold", # 凡例タイトルの書体
                                     hjust = 0.0), # 凡例タイトルの横整列位置
@@ -638,7 +748,14 @@ ggplot(data = mpg,
                              direction = "vertical", # 凡例の整列方向（horizontal / vertical）
                              nrow = 3, # 凡例の行数
                              ncol = 3, # 凡例の列数
-                             reverse = FALSE)) + # 凡例順序の逆転
+                             reverse = FALSE)) # 凡例順序の逆転
+
+
+## その他設定
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy, fill = class)) +
+  geom_point(shape = 21,
+             size = 2.0) +
   theme(text = element_text(family = "YUGO", # 図表全体のフォント
                             size = 8), # 図表全体の無事サイズ
         plot.margin = margin(t = 1, # 図表の上マージン
