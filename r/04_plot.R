@@ -144,7 +144,7 @@ ggplot(data = mpg,
 
 
 
-# 散布図 geom_point() geom_path() geom_smooth() ---------------------------------------------------------------
+# 散布図・バブルチャート geom_point() geom_path() geom_smooth() ---------------------------------------------------------------
 
 ## X軸：連続型変数
 ## Y軸：連続型変数
@@ -412,7 +412,11 @@ data_owid_col %>%
 
 
 
-# 円グラフ --------------------------------------------------------------------
+# 円グラフ geom_col() + coord_polar() --------------------------------------------------------------------
+
+## X軸：単一値
+## Y軸：連続型変数
+
 
 ## サンプルデータの作成
 data_mpg_circle <- mpg %>% 
@@ -645,6 +649,113 @@ ggplot(data = mpg,
                color = "darkblue", # マーカーの線の色
                fill = "lightblue", # マーカーの塗りつぶしの色
                stroke = 0.5) # マーカーの線の太さ
+
+
+
+# 色の設定 scale_color/fill_* --------------------------------------------------------------------
+
+## サンプルデータの作成
+data_mpg_color <- mpg %>% 
+  dplyr::group_by(class) %>% 
+  dplyr::summarise(across(c(cty, hwy), mean, na.rm = TRUE))
+
+View(data_mpg_color)
+
+
+## 手動指定（離散型変数）
+## http://www.okadajp.org/RWiki/?%E8%89%B2%E8%A6%8B%E6%9C%AC
+ggplot(data = mpg,
+       mapping = aes(x = fl, color = fl, fill = fl)) +
+  geom_bar() +
+  scale_color_manual(values = c("Red", "Salmon", "Gold", "Forestgreen", "Darkblue")) + # colorで指定した変数の離散値と同数の色を指定
+  scale_fill_manual(values = c("Red", "Salmon", "Gold", "Forestgreen", "Darkblue")) # fillで指定した変数の離散値と同数の色を指定
+
+
+## Brewer（離散型変数）
+## 様々なプリセットカラーパレット
+RColorBrewer::display.brewer.all()
+
+ggplot(data = mpg,
+       mapping = aes(x = fl, color = fl, fill = fl)) +
+  geom_bar() +
+  scale_color_brewer(palette = "Paired", # カラーパレット名
+                     direction = 1) + # 色の順序（-1で逆順）
+  scale_fill_brewer(palette = "Paired", # カラーパレット名
+                    direction = 1) # 色の順序（-1で逆順）
+
+
+## Viridis（離散型変数）
+## 色覚異常に対応したカラーパレット
+## https://ggplot2.tidyverse.org/reference/scale_viridis.html
+ggplot(data = mpg,
+       mapping = aes(x = fl, color = fl, fill = fl)) +
+  geom_bar() +
+  scale_color_viridis_d(option = "viridis", # パレットの種類（magma / inferno / plasma / viridis / cividis）
+                        direction = 1) + # 色の順序（-1で逆順）
+  scale_fill_viridis_d(option = "viridis", # パレットの種類（magma / inferno / plasma / viridis / cividis）
+                       direction = 1) # 色の順序（-1で逆順）
+
+
+## ggsci（離散型変数）
+## 様々な科学ジャーナルのカラーパレット
+## https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html
+ggplot(data = mpg,
+       mapping = aes(x = fl, color = fl, fill = fl)) +
+  geom_bar() +
+  scale_color_npg() + 
+  scale_fill_npg()
+
+
+## distiller（連続型変数）
+## Brewerが提供する様々なプリセットカラーパレット
+RColorBrewer::display.brewer.all()
+
+ggplot(data = mpg,
+       mapping = aes(x = hwy, fill = ..x..)) +
+  geom_dotplot() +
+  scale_fill_distiller(palette = "Blues", # カラーパレット名
+                       direction = 1) # 色の順序（-1で逆順）
+
+
+## Viridis（連続型変数）
+## 色覚異常に対応したカラーパレット
+## https://ggplot2.tidyverse.org/reference/scale_viridis.html
+ggplot(data = mpg,
+       mapping = aes(x = hwy, fill = ..x..)) +
+  geom_dotplot() +
+  scale_fill_viridis_c(option = "viridis", # パレットの種類（magma / inferno / plasma / viridis / cividis）
+                       direction = 1) # 色の順序（-1で逆順）
+
+
+## gradient（連続型変数）
+## 2色グラデーション
+ggplot(data = mpg,
+       mapping = aes(x = hwy, fill = ..x..)) +
+  geom_dotplot() +
+  scale_fill_gradient(low = "Red", # 最小値の色
+                      high = "Forestgreen") # 最大値の色
+
+
+## gradient2（連続型変数）
+## 3色グラデーション
+ggplot(data = mpg,
+       mapping = aes(x = hwy, fill = ..x..)) +
+  geom_dotplot() +
+  scale_fill_gradient2(low = "Red", # 最小値の色
+                       mid = "Gold", # 中間値の色
+                       high = "Forestgreen", # 最大値の色
+                       midpoint = 30) # 中間値
+
+
+## gradientn（連続型変数）
+## パレットを指定したn色グラデーション
+RColorBrewer::display.brewer.all()
+
+ggplot(data = mpg,
+       mapping = aes(x = hwy, fill = ..x..)) +
+  geom_dotplot() +
+  scale_fill_gradientn(colors = brewer.pal(name = "RdYlGn",
+                                           n = 9))
 
 
 
