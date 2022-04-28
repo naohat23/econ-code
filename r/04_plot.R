@@ -620,7 +620,7 @@ ggplot(data = mpg,
               size = 0.5) # ヴァイオリンの線の太さ
 
 
-## ヴァイオリングラフ
+## ヴァイオリングラフ＆ジッターグラフ
 ggplot(data = mpg,
        mapping = aes(x = class, y = hwy)) +
   geom_violin(scale = "area", # ヴァイオリンの大きさ（area：すべての面積が同じ、count：サンプル個数に比例、width：すべての幅が同じ）
@@ -652,7 +652,7 @@ ggplot(data = mpg,
 
 
 
-# 色の設定 scale_color/fill_* --------------------------------------------------------------------
+# 色の設定 scale_color/fill_*() --------------------------------------------------------------------
 
 ## サンプルデータの作成
 data_mpg_color <- mpg %>% 
@@ -759,7 +759,7 @@ ggplot(data = mpg,
 
 
 
-# 軸の設定 ---------------------------------------------------------------------
+# 軸の設定 scale_x/y_*() ---------------------------------------------------------------------
 
 ## サンプルデータの作成
 data_owid_scale <- data_owid %>% 
@@ -838,6 +838,66 @@ ggplot(data = economics,
   labs(x = "日付（年/月）", # X軸のタイトル
        y = "失業者数（千人）") + # Y軸のタイトル
   theme(axis.title = element_text(size = 8)) # 軸タイトルの文字サイズ
+
+
+
+# 複数グラフ（ファセット） facet_*() --------------------------------------------------
+
+## 行方向の複合グラフ
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_point() +
+  facet_rep_grid(rows = vars(class), # 変数class別にグラフを作成
+                 scales = "fixed", # 目盛設定（fixed：全グラフ共通、free：全グラフ独立、free_x：X軸のみ独立、free_y：Y軸のみ独立）
+                 repeat.tick.labels = FALSE) # 目盛表示（TRUE：すべてのグラフに表示、FALSE：端のグラフのみ表示
+
+
+## 列方向の複合グラフ
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_point() +
+  facet_rep_grid(cols = vars(class), # 変数class別にグラフを作成
+                 scales = "fixed", # 目盛設定（fixed：全グラフ共通、free：全グラフ独立、free_x：X軸のみ独立、free_y：Y軸のみ独立）
+                 repeat.tick.labels = FALSE) # 目盛表示（TRUE：すべてのグラフに表示、FALSE：端のグラフのみ表示
+
+
+## 行・列方向の複合グラフ
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_point() +
+  facet_rep_grid(rows = vars(year), # 変数year別に行方向のグラフを作成
+                 cols = vars(class), # 変数class別に列方向のグラフを作成
+                 scales = "fixed", # 目盛設定（fixed：全グラフ共通、free：全グラフ独立、free_x：X軸のみ独立、free_y：Y軸のみ独立）
+                 repeat.tick.labels = TRUE) # 目盛表示（TRUE：すべてのグラフに表示、FALSE：端のグラフのみ表示
+
+
+## 行数・列数を指定した複合グラフ
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_point() +
+  facet_rep_wrap(facets = ~ manufacturer, # 変数manufacturer別にグラフを作成
+                 nrow = 3, # 行方向のグラフ数
+                 ncol = 5, # 列方向のグラフ数
+                 scales = "fixed", # 目盛設定（fixed：全グラフ共通、free：全グラフ独立、free_x：X軸のみ独立、free_y：Y軸のみ独立）
+                 repeat.tick.labels = TRUE) # 目盛表示（TRUE：すべてのグラフに表示、FALSE：端のグラフのみ表示
+
+
+## ファセット設定
+## 行数・列数を指定した複合グラフ
+ggplot(data = mpg,
+       mapping = aes(x = cty, y = hwy)) +
+  geom_point() +
+  facet_rep_wrap(facets = ~ manufacturer, # 変数manufacturer別にグラフを作成
+                 ) +
+  theme(strip.background = element_rect(color = NA, # ファセットタイトル領域の枠の色
+                                        fill = "White"), # ファセットタイトル領域の塗りつぶしの色
+        strip.text = element_text(color = "Black", # ファセットタイトルの色
+                                  face = "bold", # ファセットタイトルの書体
+                                  size = 8, # ファセットタイトルのフォントサイズ
+                                  hjust = 0.5, # ファセットタイトルの横方向の整列位置
+                                  vjust = 0.5), # ファセットタイトルの縦方向の整列位置
+        panel.spacing.x = unit(x = 2, units = "mm"), # ファセットのグラフ間の横方向のスペース
+        panel.spacing.y = unit(x = 2, units = "mm")) # ファセットのグラフ間の縦方向のスペース
 
 
 
