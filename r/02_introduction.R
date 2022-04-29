@@ -83,7 +83,35 @@ rm(
 
 
 
-# データを読み込み・セーブ・ロード ----------------------------------------------------------------
+# データの読み込み ----------------------------------------------------------------
+
+## CSVデータ
+data <- readr::read_csv(file = "", # ファイルパス／URL
+                        col_names = TRUE, # ヘッダー（列名データ）の有無
+                        col_types = NULL, # 各列の型の指定（c：文字列型、d：数値型、D：日付型、l：論理値型）
+                         skip = 0) # 読み込み時に上からスキップする行数
+
+
+## Excelデータ（xlsx／xls可、URL不可）
+data <- readxl::read_excel(path = "", # ファイルパス（URL不可）
+                           sheet = NULL, # シートインデックス／シート名
+                           col_names = TRUE, # ヘッダー（列名データ）の有無
+                           col_types = NULL, # 各列の型の指定（c：文字列型、d：数値型、D：日付型、l：論理値型）
+                           skip = 0) # 読み込み時に上からスキップする行数
+
+
+## Excelデータ（xlsxのみ、URL可）
+data <- openxlsx::read.xlsx(xlsxFile = "", # ファイルパス／URL
+                            sheet = 1, # シートインデックス／シート名
+                            startRow = 5, # 読み込み開始行
+                            colNames = TRUE, # 列名データの有無
+                            rowNames = FALSE, # 行名データの有無
+                            rows = 5:53, # 読み込む列（NULLですべて読み込み）
+                            cols = NULL) # 読み込む行（NULLですべて読み込み）
+
+
+
+# セーブ・ロード ----------------------------------------------------------------
 
 ## Our World in Dataの新型コロナデータをtibble型で読み込み
 data_owid <- readr::read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv", # ファイルパス／URL
