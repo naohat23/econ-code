@@ -14,18 +14,19 @@ Running under: Windows 10 x64 (build 19042)
 ### 02_introduction.R - Rの基本的な使用方法
 * 主要ショートカットキー
 * 基本操作・ベクトル・リスト・関数
-* データを読み込み・セーブ・ロード
+* データの読み込み
+* セーブ・ロード
 
 ### 03_tidyverse.R - tidyverseを使用したデータベース操作
-* サンプルデータを読み込み
-* 列を選択 dplyr::select()
-* 列の名前を変更 dplyr::rename()
-* 行をフィルタ dplyr::filter()
-* 行を並べ替え dplyr::arrange()
-* 列を追加・修正 dplyr::mutate()
+* サンプルデータの読み込み
+* 列の選択 dplyr::select()
+* 列名の変更 dplyr::rename()
+* 行のフィルタ dplyr::filter()
+* 行の並べ替え dplyr::arrange()
+* 列の追加・修正 dplyr::mutate()
 * グループ化 dplyr::group_by()
 * 集計 dplyr::summarise()
-* 縦型・横型を変換 tidyr::pivot_*()
+* 縦型・横型の変換 tidyr::pivot_*()
 * 重複処理 dplyr::distinct()
 * 欠損値処理 drop_na() replace_na() fill()
 * 時系列データの頻度変換 tidyquant::tq_transmute()
@@ -43,4 +44,5 @@ Running under: Windows 10 x64 (build 19042)
 * 色の設定 scale_color/fill_*()
 * 軸の設定
 * 複数グラフ（ファセット） facet_*()
+* 地図ファセット facet_geo()
 * タイトル・目盛線・凡例・保存 theme() ggsave()
