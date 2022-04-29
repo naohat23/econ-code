@@ -53,6 +53,7 @@ packages <- c(
   "lubridate", # 日付処理
   "magrittr", # パイプ処理
   "tidyverse", # モダンなデータ分析用パッケージセット
+  "readxl", # Excelファイルの読み込み
   # 図表系
   "geofacet", # 地図形式のファセット図配置
   "ggpubr", # 論文形式の図表作成
@@ -64,7 +65,9 @@ packages <- c(
   "mgcv", # 一般化加法モデル（GAM）
   "plm", # パネルデータモデル
   "sigmoid", # シグモイド関数
-  "tidyquant" # 金融時系列データ分析
+  "tidyquant", # 金融時系列データ分析
+  # その他
+  "openxlsx" # Excelのxlsxファイルの読み込み・編集・書き出し
 )
 
 
