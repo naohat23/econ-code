@@ -12,7 +12,10 @@ library(ggpubr)
 library(ggsci)
 library(ggrepel)
 library(lemon)
+library(magrittr)
+library(openxlsx)
 library(RColorBrewer)
+library(readxl)
 
 
 ## ggplotのテーマ設定（Excelのグラフと類似したテーマを選択）
@@ -37,10 +40,32 @@ help(economics)
 
 
 ## Our World in Dataの新型コロナデータをtibble型で読み込み
+## Hannah Ritchie, Edouard Mathieu, Lucas Rodes-Guirao, Cameron Appel, Charlie Giattino, Esteban Ortiz-Ospina, Joe Hasell, Bobbie Macdonald, Diana Beltekian and Max Roser (2020) - "Coronavirus Pandemic (COVID-19)". Published online at OurWorldInData.org. Retrieved from: 'https://ourworldindata.org/coronavirus' [Online Resource]
 data_owid <- readr::read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv", # ファイルパス／URL
                              col_names = TRUE, # ヘッダー（列名データ）の有無
                              col_types = NULL, # 各列の型の指定（c：文字列型、d：数値型、D：日付型、l：論理値型）
                              skip = 0) # 読み込み時に上からスキップする行数
+
+
+## 内閣府の県内総生産（生産側、名目）データをdata.frame形式で読み込み、前処理して縦型のtibble形式に変換
+data_gdp_pref <- openxlsx::read.xlsx(xlsxFile = "https://www.esri.cao.go.jp/jp/sna/data/data_list/kenmin/files/contents/tables/2018/soukatu1.xlsx", # ファイルパス／URL
+                                     sheet = 1, # シートインデックス／シート名
+                                     startRow = 5, # 読み込み開始行
+                                     colNames = TRUE, # 列名データの有無
+                                     rowNames = FALSE, # 行名データの有無
+                                     rows = 5:53, # 読み込む列（NULLですべて読み込み）
+                                     cols = NULL) %>% # 読み込む行（NULLですべて読み込み）
+  dplyr::mutate(across(`2006`:`2018`, as.double)) %>% 
+  dplyr::rename(pref_code = X1,
+                pref_name = X2) %>% 
+  dplyr::select(-X16) %>% 
+  tidyr::pivot_longer(cols = c(-"pref_code", -"pref_name"), names_to = "year", values_to = "gdp_nominal") %>% 
+  dplyr::mutate(across(c(pref_code, year), as.double)) %>% 
+  dplyr::arrange(pref_code, year) %>% 
+  dplyr::group_by(pref_name) %>% 
+  dplyr::mutate(gdp_nominal_pchg = 100 * (gdp_nominal / dplyr::lag(gdp_nominal, n = 1) - 1)) %>% 
+  dplyr::ungroup() %>% 
+  tibble::as_tibble()
 
 
 
@@ -571,7 +596,7 @@ ggplot(data = data_owid_step,
 
 
 
-# 箱ひげ・ヴァイオリングラフ geom_boxplot() geom_violin() geom_dotplot() geom_jitter() geom_dotplot() ---------------------------
+# 箱ひげ・ヴァイオリングラフ geom_boxplot() geom_violin() geom_jitter() geom_dotplot() ---------------------------
 
 ## X軸：離散型変数
 ## Y軸：連続型変数
@@ -887,10 +912,9 @@ ggplot(data = mpg,
 ggplot(data = mpg,
        mapping = aes(x = cty, y = hwy)) +
   geom_point() +
-  facet_rep_wrap(facets = ~ manufacturer, # 変数manufacturer別にグラフを作成
-                 ) +
+  facet_rep_wrap(facets = ~ manufacturer) + # 変数manufacturer別にグラフを作成
   theme(strip.background = element_rect(color = NA, # ファセットタイトル領域の枠の色
-                                        fill = "White"), # ファセットタイトル領域の塗りつぶしの色
+                                        fill = "White"), # ファセットタイトル領域の塗りつぶしの色（NAで無色）
         strip.text = element_text(color = "Black", # ファセットタイトルの色
                                   face = "bold", # ファセットタイトルの書体
                                   size = 8, # ファセットタイトルのフォントサイズ
@@ -898,6 +922,42 @@ ggplot(data = mpg,
                                   vjust = 0.5), # ファセットタイトルの縦方向の整列位置
         panel.spacing.x = unit(x = 2, units = "mm"), # ファセットのグラフ間の横方向のスペース
         panel.spacing.y = unit(x = 2, units = "mm")) # ファセットのグラフ間の縦方向のスペース
+
+
+
+# 地図ファセット facet_geo() -----------------------------------------------------
+
+## サンプルデータの確認
+View(data_gdp_pref)
+
+
+## geofacetのjp_prefs_grid2に日本語の都道府県名を追加
+data_prefs <- data_gdp_pref %>% 
+  dplyr::select(pref_code, pref_name) %>% 
+  dplyr::distinct() %>% 
+  dplyr::rename(code = pref_code)
+
+jp_prefs_grid2 %<>%
+  dplyr::left_join(data_prefs, by = "code")
+
+
+## 地図ファセット
+ggplot(data = data_gdp_pref,
+       mapping = aes(x = year, y = gdp_nominal_pchg)) +
+  geom_line() +
+  geom_point() +
+  facet_geo(facets = ~ pref_name, # 変数pref_name別にグラフを作成
+            grid = "jp_prefs_grid2", # 使用する地図グリッド
+            scales = "fixed") + # 目盛設定（fixed：全グラフ共通、free：全グラフ独立、free_x：X軸のみ独立、free_y：Y軸のみ独立）
+  theme(strip.background = element_rect(color = NA, # ファセットタイトル領域の枠の色
+                                        fill = NA), # ファセットタイトル領域の塗りつぶしの色（NAで無色）
+        strip.text = element_text(color = "Black", # ファセットタイトルの色
+                                  face = "bold", # ファセットタイトルの書体
+                                  size = 8, # ファセットタイトルのフォントサイズ
+                                  hjust = 0.5, # ファセットタイトルの横方向の整列位置
+                                  vjust = 0.5), # ファセットタイトルの縦方向の整列位置
+        panel.spacing.x = unit(x = 1, units = "mm"), # ファセットのグラフ間の横方向のスペース
+        panel.spacing.y = unit(x = 0.5, units = "mm")) # ファセットのグラフ間の縦方向のスペース
 
 
 
@@ -1037,4 +1097,4 @@ ggsave(filename = "plot/04_plot_sample_1.png", # 図表のファイル名
        units = "cm", # 図表のサイズ単位
        dpi = 600) # 図表の解像度
 
-  
+
