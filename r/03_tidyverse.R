@@ -8,7 +8,7 @@ library(tidyquant)
 
 
 
-# サンプルデータを読み込み ------------------------------------------------------------
+# サンプルデータの読み込み ------------------------------------------------------------
 
 ## Our World in Dataの新型コロナデータをtibble型で読み込み
 data_owid <- readr::read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv", # ファイルパス／URL
@@ -22,7 +22,7 @@ View(data_owid)
 
 
 
-# 列を選択 dplyr::select() ----------------------------------------------------------------
+# 列の選択 dplyr::select() ----------------------------------------------------------------
 
 ## 列名を入力して列を選択
 data_owid %>% 
@@ -61,13 +61,13 @@ data_owid %>%
 
 
 
-# 列の名前を変更 dplyr::rename() ----------------------------------------------------------------
+# 列名の変更 dplyr::rename() ----------------------------------------------------------------
 data_owid %>% 
   dplyr::rename(country = location)
 
 
 
-# 行をフィルタ dplyr::filter() ----------------------------------------------------------------
+# 行のフィルタ dplyr::filter() ----------------------------------------------------------------
 
 ## 条件を入力して行をフィルタ
 data_owid %>% 
@@ -115,7 +115,7 @@ data_owid %>%
 
 
 
-# 行を並べ替え dplyr::arrange() ----------------------------------------------------------------
+# 行の並べ替え dplyr::arrange() ----------------------------------------------------------------
 
 ## 昇順ソート
 data_owid %>% 
@@ -138,7 +138,7 @@ data_owid %>%
 
 
 
-# 列を追加・修正 dplyr::mutate() ----------------------------------------------------------------
+# 列の追加・修正 dplyr::mutate() ----------------------------------------------------------------
 
 ## サンプルデータを作成
 data_owid_jp <- data_owid %>% 
@@ -257,7 +257,7 @@ data_owid %>%
 
 
 
-# 縦型・横型を変換 tidyr::pivot_*() ----------------------------------------------------------------
+# 縦型・横型の変換 tidyr::pivot_*() ----------------------------------------------------------------
 
 ## サンプルデータを作成
 data_owid_cases <- data_owid %>% 
@@ -285,7 +285,34 @@ data_owid_cases_long
 ## こうした複数の変数の縦型変換はggplotによる図表作成で多用する
 data_owid %>% 
   dplyr::select(location, date, new_cases, new_deaths) %>% 
-  tidyr::pivot_longer(cols = c("new_cases", "new_deaths")) 
+  tidyr::pivot_longer(cols = c("new_cases", "new_deaths"))
+
+
+
+# データの結合 dplyr::*_join() ---------------------------------------------------------
+
+## サンプルデータの確認
+print(band_members)
+print(band_instruments)
+
+## 両方のデータにある行を結合
+band_members %>% 
+  dplyr::inner_join(band_instruments, by = "name")
+
+
+## 左のデータにある行を結合
+band_members %>% 
+  dplyr::left_join(band_instruments, by = "name")
+
+
+## 右のデータにある行を結合
+band_members %>% 
+  dplyr::right_join(band_instruments, by = "name")
+
+
+## すべての行を結合
+band_members %>% 
+  dplyr::full_join(band_instruments, by = "name")
 
 
 
@@ -297,7 +324,7 @@ data_owid %>%
 
 
 
-# 欠損値処理 drop_na() replace_na() fill() ----------------------------------------------------------------
+# 欠損値処理 tidyr::drop_na() tidyr::replace_na() tidyr::fill() ----------------------------------------------------------------
 
 ## サンプルデータを作成
 data_owid_vaccinated <- data_owid %>% 
@@ -344,6 +371,43 @@ data_owid_vaccinated %>%
 data_owid_vaccinated %>% 
   tidyr::fill(c(-date, everything()), .direction = "down") %>% 
   tail()
+
+
+
+# 補完処理 tidyr::complete() ------------------------------------------------------------------
+
+## サンプルデータの作成
+data_complete_1 <- tibble(
+  group = c(1:2, 1, 2),
+  item_id = c(1:2, 2, 3),
+  item_name = c("a", "a", "b", "b"),
+  value1 = c(1, NA, 3, 4),
+  value2 = 4:7
+)
+
+print(data_complete_1)
+
+data_complete_2 <- tibble(
+  date = as.Date(c("2022-01-01", "2022-01-03", "2022-01-04")),
+  value = c(11, 13, 14)
+)
+
+print(data_complete_2)
+
+
+## 変数group、item_id、item_nameのすべての組み合わせ候補を補完
+data_complete_1 %>% 
+  tidyr::complete(group, item_id, item_name)
+
+
+## 変数item_idとitem_nameのユニークなペアに対するgroupのすべての組み合わせ候補を補完
+data_complete_1 %>% 
+  tidyr::complete(group, tidyr::nesting(item_id, item_name))
+
+
+## full_seq()関数と併用して時系列データの欠損箇所を補完
+data_complete_2 %>% 
+  tidyr::complete(date = full_seq(date, period = 1))
 
 
 
